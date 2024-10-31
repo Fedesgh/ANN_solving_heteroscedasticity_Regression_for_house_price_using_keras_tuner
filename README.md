@@ -1,7 +1,7 @@
 Using a dataset of house prices from (https://www.kaggle.com/datasets/harlfoxem/housesalesprediction)
 We aim to build an artificial neural network (ANN) optimized with Keras-Tuner.
 
-♦The first model shows signs of **heteroscedasticity** then we tried several steps to improve the metrics and understanding of the data set.
+♦The first model shows signs of **heteroscedasticity** then we tried several steps to improve the metrics and the understanding of the data set.
 
 
 ♦About the data set: 
