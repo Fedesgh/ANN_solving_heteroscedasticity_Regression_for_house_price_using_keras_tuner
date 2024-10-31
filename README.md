@@ -1,6 +1,9 @@
 Using a dataset of house prices from (https://www.kaggle.com/datasets/harlfoxem/housesalesprediction)
 We aim to build an artificial neural network (ANN) optimized with Keras-Tuner.
 
+♦The first model shows signs of **heteroscedasticity** then we tried several steps to improve the metrics and understanding of the data set.
+
+
 ♦About the data set: 
 
 Number of rows: 21613
@@ -9,7 +12,8 @@ Number of columns: 21
 
 We use 18 columns as features (inputs), 1 as target (continuous variable "price"), and drop 2
 
-## Model results
+
+## First model ANN
 
 
 ♦Hyperparameters:
@@ -66,7 +70,13 @@ RMSE:  129690.04519255627
 ![images/images_ann/metrics.png](images/images_ann/metric.png)
 
 
-♦ The results show signs of **heteroscedesticity** so we perform a **Breusch-Pagan Test** (WLS.ipynb) wich confirms it.
+
+## Breusch-Pagan Test
+
+
+
+♦ The results show signs of **heteroscedesticity** so we perform a **Breusch-Pagan Test** (WLS.ipynb) wich confirms it (**p-value = 0**).
+
 
 
 ## Trying to solve **heteroscedesticity**. 
@@ -78,7 +88,7 @@ There are several ways to overcome **heteroscedesticity**, one of them is to try
 ### ANN with Box-Cox transformation.
 
 
-We transform the target with **Box-Cox** and store its **lambda** value. After train the **ANN** detransform the predicted values and obtain the metrics
+We transform the target with **Box-Cox** (ANN_regression_Box_Cox.ipynb) and store its **lambda** value. After training the **ANN** we detransform using the inverse **Box-Cox** function with **lambda** the predicted values and obtain the metrics
 
 
 ♦Metrics:
@@ -112,14 +122,10 @@ First we need to get **MSE** from the trained **OLS** model so that we can use i
 
 ♦Metrics:
 
-![images/imageswls
-/metrics.jpg](images/imageswls
-/metrics.jpg)
+![images/imageswls/metrics.jpg](images/imageswls/metrics.jpg)
 
 
-![images/imageswls
-/metrics2.jpg](images/imageswls
-/metrics2.jpg)
+![images/imageswls/metrics2.jpg](images/imageswls/metrics2.jpg)
 
 
 
@@ -154,60 +160,56 @@ Although **WLS** performs better than **OLS** as it is supposed to do in this ca
 
 
 
-## Attempt at segmentation through Kmeans 
+## Segmentation through Kmeans 
 
 
 
-The idea is to build an unsupervised model to segment the data before applying a regression model to predict the price. Hopefully, we will be able to differentiate complicated data sets from simple ones. We train an optimal Kmeans with K=5 which shows us that there are 2 groups of 5, with a wider price range.
+The idea is to build an unsupervised model (Segmentation1.ipybn) to segment the data before applying a regression model to predict the price. Hopefully, we will be able to differentiate complicated data sets from simple ones. We train an optimal Kmeans with **K=13** which shows us that there are two groups of data (3,6) with a wider price range.
 
 
-![images/images_seg
-/cluster.png](images/images_seg
-/cluster.png)
+![images/images_seg/cluster.png](images/images_seg/cluster.png)
 
 
-![images/Segmentation/Seglabels.jpg](images/images_seg
-/labesstats.jpg)
+![images/Segmentation/Seglabels.jpg](images/images_seg/labesstats.jpg)
 
 
-Then we separate the data in labels **[3,6]** and **[0,1,3,4,5,6,7,8,9,10,11]** and build an **ANN** for each group 
+Then we separate the data in labels **[3,6]** and **[0,1,2,4,5,7,8,9,10,11,12]** and build an **ANN** for each group 
 
 
-### ANN for labels [3,5]
+### ANN for labels **[0,1,2,4,5,7,8,9,10,11,12]** (labels != 3 or 6): 
 
 
 ♦Metrics:
 
 
-![images/Segmentation/metric0,1,3.png](images/Segmentation/metric0,1,3.png)
+![images/images_seg/metrics_no63.png](images/images_seg/metrics_no63.png)
 
 
-♦ MAE:  50053.131876179614
+MAE:  61773.60449419276
 
 
-♦ MAPE:  0.12146668562655259
+MAPE:  0.1276305452895651
 
 
-
-### ANN for labels [2,4]
-
-
-♦Structure:
+RMSE:  102346.97434221503
 
 
-![images/Segmentation/structure2,4.jpg](images/Segmentation/structure2,4.jpg)
+### ANN for labels [3,6]
 
 
 ♦Metrics:
 
 
-![images/Segmentation/metric2,4.png](images/Segmentation/metric2,4.png)
+![images/images_seg/metricssi63.png](images/images_seg/metricssi63.png)
 
 
-♦MAE:  122800.32979130244
+MAE:  189728.11892564403
 
 
-♦MAPE:  0.14176357064716935
+MAPE:  0.14515582486390521
+
+
+RMSE:  320830.6859570142
 
 
 ## Quantile attempt 
@@ -219,76 +221,135 @@ We treat **heteroscedasticity** as **outliers**
 First sort the data and graph .95 quantile:
 
 
-![images/quantile/Quantilegra.png](images/quantile/Quantilegra.png)
 
-### Build an ANN classifier to detect whether new data belongs outside (1) or inside (0) the 0.95 quantilee
-
-
-♦Structure:
+![images/images_quant/quantile.png](images/images_quant/quantile.png)
 
 
-![images/quantile/StructureClassQuantile.jpg](images/quantile/StructureClassQuantile.jpg)
 
+### Build an ANN classifier to detect whether new data belongs outside (1) or inside (0) the 0.95 quantile
+
+
+♦Structure: 
+
+Loss: binary_crossentropy
+
+num_layers: 16
+
+
+units_0: 54
+
+
+activation: relu
+
+
+dropout: False
+
+
+lr: 0.00010406284012562844
+
+
+units_1: 234
+
+
+units_2: 135
+
+
+units_3: 261
+
+
+units_4: 180
+
+
+units_5: 261
+
+
+units_6: 189
+
+
+units_7: 81
+
+
+units_8: 243
+
+
+units_9: 36
+
+
+units_10: 396
+
+
+units_11: 18
+
+
+units_12: 18
+
+
+units_13: 18
+
+
+units_14: 18
+
+
+units_15: 18
+
+
+Score: 0.04392734244465828
 
 
 ♦Metrics
 
 
-![images/quantile/MetricsClassQuantile.png](images/quantile/MetricsClassQuantile.png)
+![images/images_quant/metrics.png](images/images_quant/metrics.png)
 
-
-♦MAE:  66826.45548567994
-
-
-♦MAPE:  0.14593678552121173
 
 
 ### Training ANN regression for .95 quantile
 
-♦Structure:
-
-
-![images/quantile/Structure95reg.jpg](images/quantile/Structure95reg.jpg)
 
 
 ♦Metrics:
 
 
-![images/quantile/Metrics95.png](images/quantile/Metrics95.png)
+![images/images_quant/train95.png](images/images_quant/train95.png)
 
 
-♦MAE:  66826.45548567994
+
+MAE:  65967.06092114073
 
 
-♦MAPE:  0.14593678552121173
+MAPE:  0.14311744919508246
+
+
+RMSE:  96768.70049794603
 
 
 ### Training an ANN regression for .05 
 
 
-♦Structure:
-
-
-![images/quantile/structure05.jpg](images/quantile/structure05.jpg)
-
 
 ♦Metrics:
 
 
-![images/quantile/metrics05.png](images/quantile/metrics05.png)
+![images/images_quant/train05.png](images/images_quant/train05.png)
 
 
-♦MAE:  287107.61664746545
+MAE:  303073.26987327187
+
+MAPE:  0.1882879259314524
+
+RMSE:  458908.4186139931
 
 
-♦MAPE:  0.16901369037863703
-
-
-# Final and most important step:
+### Final and most important step:
 
 We classify all the data through our **ANN classifier** to predict whether they belong to the .95 quantile or not. 
 
+
 After classification we apply the correct **ANN regression** for their classes
+
+
+**Notice that there will be misclassified instances and we are interested in how the models will perform**
+
 
 ♦Results: 
 
@@ -296,21 +357,36 @@ After classification we apply the correct **ANN regression** for their classes
 **For data classified as 0.95 quantile**: 
 
 
-MAE:  42557.6068662773
+![images/images_quant/finalmetric.95.png](images/images_quant/finalmetric.95.png)
 
 
-MAPE:  0.09224515971000753
-
-**For data classified as 0.05 **:
+MAE:  42503.68199954071
 
 
-MAE:  171365.52690029616
+MAPE:  0.09253917253987413
 
 
-MAPE:  0.09833767941673963
+RMSE:  72454.40221470839
+
+
+**For data classified as 0.05**:
+
+
+![images/images_quant/finalmetric05.png](images/images_quant/finalmetric05.png)
+
+
+MAE:  198023.983157277
+
+
+MAPE:  0.12319025379957788
+
+
+RMSE:  339525.5425219687
 
 
 ## Foot note
+
+
 I noticed that there is an issue with the WLS formula in the statsmodels documentation.(https://www.statsmodels.org/dev/generated/statsmodels.regression.linear_model.WLS.html)
 
 
