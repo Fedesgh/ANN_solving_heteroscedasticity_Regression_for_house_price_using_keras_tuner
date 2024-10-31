@@ -11,53 +11,95 @@ We use 18 columns as features (inputs), 1 as target (continuous variable "price"
 
 ## Model results
 
-♦Structure:
-
-
-![model.ss.jpg](model.ss.jpg)
-
 
 ♦Hyperparameters:
 
 
-num_layers: 6
+num_layers: 4
 
-units_0: 63
 
-activation: leaky_relu
+units_0: 243
+
+
+activation: relu
+
 
 dropout: False
 
-lr: 0.00110654178783952
+
+lr: 0.00038877295727384804
 
 
+units_1: 441
 
+
+units_2: 234
+
+
+units_3: 342
+
+
+units_4: 252
+
+
+units_5: 63
+
+
+units_6: 45
+
+
+Score: 72580.02265625
 
 
 ♦Metrics: 
 
 
-MAE:  71602.69808292852
+MAE:  71293.14455383993
 
 
-MAPE:  0.1280146931732677
+MAPE:  0.12926294242315003
 
 
-![scatterplot.jpg](scatterplot.jpg)
+RMSE:  129690.04519255627
 
 
-♦ The results show signs of **heteroscadesticity** so we perform a **Breusch-Pagan Test**
+![images/images_ann/metrics.png](images/images_ann/metric.png)
 
 
-![pvalue.jpg](pvalue.jpg)
+♦ The results show signs of **heteroscedesticity** so we perform a **Breusch-Pagan Test** (WLS.ipynb) wich confirms it.
 
 
-Wich confirms it.
+## Trying to solve **heteroscedesticity**. 
 
-## Trying to solve **heteroscadesticity**y. 
 
-There are several ways to overcome **heteroscadesticity**, one of them is to try to transform the values ​​of the features that did not work in this case. 
+There are several ways to overcome **heteroscedesticity**, one of them is to try to transform the target. 
 
+
+### ANN with Box-Cox transformation.
+
+
+We transform the target with **Box-Cox** and store its **lambda** value. After train the **ANN** detransform the predicted values and obtain the metrics
+
+
+**Metrics**:
+
+MAE:  76957.75244332664
+
+
+MAPE:  0.14025944529697412
+
+
+RMSE:  141284.0378744411
+
+![images/images_box/metricfinal.png](images/images_box/metricfinal.png)
+
+
+
+
+![images/images_box/res.png](images/images_box/res.png)
+
+
+### WLS model.
 
 Another solution may be to use a weighted least squares (WLS) model that we developed (WLS.ipybn) using the **statsmodels** library.
 
@@ -68,14 +110,14 @@ First we need to get **MSE** from the trained **OLS** model so that we can use i
 ♦Results metrics: 
 
 
-![images/metrics.jpg](images/metrics.jpg)
+
 
 
 Although **WLS** performs better than **OLS** as it is supposed to do in this case, both models perform poorly compared to our **ANN** with MAE: 71602.69808292852.2.
 
 
 
-![images/OLSv.jpg](images/OLSv.png)
+
 
 
 ## Attempt at segmentation through Kmeans 
