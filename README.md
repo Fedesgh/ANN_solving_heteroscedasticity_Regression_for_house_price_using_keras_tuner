@@ -81,7 +81,9 @@ There are several ways to overcome **heteroscedesticity**, one of them is to try
 We transform the target with **Box-Cox** and store its **lambda** value. After train the **ANN** detransform the predicted values and obtain the metrics
 
 
-**Metrics**:
+♦Metrics:
+
+
 
 MAE:  76957.75244332664
 
@@ -90,6 +92,8 @@ MAPE:  0.14025944529697412
 
 
 RMSE:  141284.0378744411
+
+
 
 ![images/images_box/metricfinal.png](images/images_box/metricfinal.png)
 
@@ -106,17 +110,47 @@ Another solution may be to use a weighted least squares (WLS) model that we deve
 
 First we need to get **MSE** from the trained **OLS** model so that we can use it to assign **weights** as parameter in **WLS**.
 
+♦Metrics:
 
-♦Results metrics: 
-
-
-
-
-
-Although **WLS** performs better than **OLS** as it is supposed to do in this case, both models perform poorly compared to our **ANN** with MAE: 71602.69808292852.2.
+![images/imageswls
+/metrics.jpg](images/imageswls
+/metrics.jpg)
 
 
+![images/imageswls
+/metrics2.jpg](images/imageswls
+/metrics2.jpg)
 
+
+
+OlS MAE:  125881.5718112254
+
+
+OlS MAPE:  0.25561092052451
+
+
+OlS RMSE:  201188.16048555568
+
+
+==================
+
+
+WLS MAE:  118120.09129246318
+
+
+WLS MAPE:  0.21997946214696784
+
+
+WLS MAPE:  217696.18526827247
+
+
+♦Results: 
+
+
+
+
+
+Although **WLS** performs better than **OLS** as it is supposed to do in this case, both models perform poorly compared to our **ANN** with MAE: 72580.02265625.
 
 
 
@@ -127,22 +161,19 @@ Although **WLS** performs better than **OLS** as it is supposed to do in this ca
 The idea is to build an unsupervised model to segment the data before applying a regression model to predict the price. Hopefully, we will be able to differentiate complicated data sets from simple ones. We train an optimal Kmeans with K=5 which shows us that there are 2 groups of 5, with a wider price range.
 
 
-![images/Segmentation/Segments.jpg](images/Segmentation/Segments.jpg)
+![images/images_seg
+/cluster.png](images/images_seg
+/cluster.png)
 
 
-![images/Segmentation/Seglabels.jpg](images/Segmentation/Seglabels.jpg)
+![images/Segmentation/Seglabels.jpg](images/images_seg
+/labesstats.jpg)
 
 
-Then we separate the data in labels **[2,4]** and **[0,1,3]** and build an **ANN** for each group 
+Then we separate the data in labels **[3,6]** and **[0,1,3,4,5,6,7,8,9,10,11]** and build an **ANN** for each group 
 
 
-### ANN for labels [0,1,3]
-
-
-♦Structure:
-
-
-![images/Segmentation/estructure0,1,3.jpg](images/Segmentation/estructure0,1,3.jpg)
+### ANN for labels [3,5]
 
 
 ♦Metrics:
@@ -155,6 +186,7 @@ Then we separate the data in labels **[2,4]** and **[0,1,3]** and build an **ANN
 
 
 ♦ MAPE:  0.12146668562655259
+
 
 
 ### ANN for labels [2,4]
@@ -177,7 +209,9 @@ Then we separate the data in labels **[2,4]** and **[0,1,3]** and build an **ANN
 
 ♦MAPE:  0.14176357064716935
 
+
 ## Quantile attempt 
+
 
 We treat **heteroscedasticity** as **outliers**
 
